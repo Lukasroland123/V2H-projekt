@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta charset="utf-8">
+<title>V2H</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="iphone-frame">
+<div id="iphone-notch"><div id="iphone-camera"></div></div>
+<div id="iphone-statusbar">
+  <span id="sb-time">12:00</span>
+  <div id="sb-icons">
+    <svg width="16" height="12" viewBox="0 0 16 12"><rect x="0" y="3" width="3" height="9" rx="1" fill="currentColor" opacity=".4"/><rect x="4.5" y="2" width="3" height="10" rx="1" fill="currentColor" opacity=".6"/><rect x="9" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg>
+    <svg width="16" height="12" viewBox="0 0 24 12"><rect x="0" y="1" width="21" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="3" width="15" height="6" rx="1" fill="currentColor"/><rect x="22" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+  </div>
+</div>
+<div id="iphone-screen">
+
+<!-- NATUR BAGGRUND -->
+<div id="nature-bg">
+  <div class="sky"></div>
+  <div class="sun"></div>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-progress" id="ob-dots"></div>
+
+  <div class="ob-step" id="ob-step-1">
+    <div class="ob-icon">⚡</div>
+    <h2>Hvad er dit elforbrug pr. kvartal?</h2>
+    <p class="ob-sub">Find "samlet forbrug" på din elregning — typisk opgjort pr. kvartal</p>
+    <div class="ob-input-wrap">
+      <input type="number" id="inp-kwh" placeholder="fx 1413" min="0" max="99999">
+      <span class="ob-unit">kWh/kvartal</span>
+    </div>
+    <button class="ob-next" onclick="obNext(1)">Fortsæt</button>
+  </div>
+
+  <div class="ob-step" id="ob-step-2" style="display:none">
+    <div class="ob-icon">💡</div>
+    <h2>Hvad betaler du i el pr. kvartal?</h2>
+    <p class="ob-sub">Find det samlede beløb på din elregning for kvartalet</p>
+    <div class="ob-input-wrap">
+      <input type="number" id="inp-elregning" placeholder="fx 2910" min="0" max="99999">
+      <span class="ob-unit">kr./kvartal</span>
+    </div>
+    <button class="ob-next" onclick="obNext(2)">Fortsæt</button>
+  </div>
+
+  <div class="ob-step" id="ob-step-3" style="display:none">
+    <div class="ob-icon">🚗</div>
+    <h2>Hvor mange km kører du typisk på en arbejdsdag?</h2>
+    <p class="ob-sub">Til og fra arbejde samlet</p>
+    <div class="ob-input-wrap">
+      <input type="number" id="inp-km" placeholder="fx 40" min="0" max="999">
+      <span class="ob-unit">km/dag</span>
+    </div>
+    <button class="ob-next" onclick="obNext(3)">Fortsæt</button>
+  </div>
+
+  <div class="ob-step" id="ob-step-4" style="display:none">
+    <div class="ob-icon">👨‍👩‍👧</div>
+    <h2>Hvor mange personer er I i husstanden?</h2>
+    <p class="ob-sub">Hjælper os estimere jeres forbrug</p>
+    <div class="ob-stepper">
+      <button class="step-btn" onclick="stepperChange(-1)">−</button>
+      <span id="stepper-val">2</span>
+      <button class="step-btn" onclick="stepperChange(1)">+</button>
+    </div>
+    <button class="ob-next" onclick="obNext(4)">Fortsæt</button>
+  </div>
+
+  <div class="ob-step" id="ob-step-5" style="display:none">
+    <div class="ob-icon">🔌</div>
+    <h2>Kan du lade bilen hjemme?</h2>
+    <p class="ob-sub">Fx med en ladeboks eller stikkontakt</p>
+    <div class="ob-choices">
+      <button class="ob-choice" id="ch-ja" onclick="setChoice('hjemoplad','ja',this)">Ja</button>
+      <button class="ob-choice" id="ch-nej" onclick="setChoice('hjemoplad','nej',this)">Nej</button>
+    </div>
+    <button class="ob-next" onclick="obNext(5)">Fortsæt</button>
+  </div>
+
+  <div class="ob-step" id="ob-step-6" style="display:none">
+    <div class="ob-icon">🌙</div>
+    <h2>Tager du spontane aftenture i bilen?</h2>
+    <p class="ob-sub">Vi bruger det til at anbefale en minimumsgrænse</p>
+    <div class="ob-choices three">
+      <button class="ob-choice" onclick="setChoice('aftensture','sjældent',this)">Sjældent</button>
+      <button class="ob-choice" onclick="setChoice('aftensture','nogle',this)">Nogle gange</button>
+      <button class="ob-choice" onclick="setChoice('aftensture','ofte',this)">Ofte</button>
+    </div>
+    <button class="ob-next" onclick="obNext(6)">Se dit estimat</button>
+  </div>
+
+  <div class="ob-step" id="ob-summary" style="display:none">
+    <div class="ob-icon">✅</div>
+    <h2>Vi har lavet dit personlige estimat</h2>
+    <div class="ob-summary-card">
+      <div class="ob-sum-row">
+        <span class="ob-sum-lbl">Gennemsnitlig elpris</span>
+        <span class="ob-sum-val" id="sum-elpris" style="color:var(--bl)">—</span>
+      </div>
+      <div class="ob-sum-row">
+        <span class="ob-sum-lbl">Potentiel besparelse</span>
+        <span class="ob-sum-val" id="sum-besparelse">—</span>
+      </div>
+      <div class="ob-sum-row">
+        <span class="ob-sum-lbl">Anbefalet minimumsgrænse</span>
+        <span class="ob-sum-val" id="sum-min">—</span>
+      </div>
+    </div>
+    <p class="ob-fine">Baseret på din gennemsnitlige elpris og at 90% af dit forbrug flyttes til natpris via V2H</p>
+    <button class="ob-next" onclick="obFinish()">Kom i gang</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
+
+  <!-- HJEM -->
+  <div class="screen" id="screen-hjem">
+
+    <div class="hjem-body">
+      <!-- Price gauge left -->
+      <div class="gauge-wrap">
+        <div class="gauge-bar" id="gauge-bar">
+          <div class="gauge-marker" id="gauge-marker"></div>
+        </div>
+        <div class="gauge-label" id="gauge-label">— kr/kWh</div>
+        <div class="gauge-status">Elpris nu</div>
+      </div>
+
+      <!-- Center content -->
+      <div class="hjem-center">
+        <!-- Mini cards -->
+        <div class="hjem-cards">
+          <div class="mini-card">
+            <div class="mini-card-lbl">Batteri</div>
+            <div class="mini-card-val" id="hjem-soc">95%</div>
+            <div class="mini-card-sub" id="hjem-km">— km</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-lbl">Strømpris</div>
+            <div class="mini-card-val" id="hjem-price">— øre</div>
+            <div class="mini-card-sub" id="hjem-price-lbl">—</div>
+          </div>
+        </div>
+
+        <!-- Besparelse all time -->
+        <div class="sav-alltime-card">
+          <div class="sav-alltime-lbl">All time besparelse</div>
+          <div class="sav-alltime-vals">
+            <div class="sav-alltime-item">
+              <div class="sav-alltime-icon">💰</div>
+              <div class="sav-alltime-val" id="hjem-savings">0,00 kr.</div>
+            </div>
+            <div class="sav-alltime-divider"></div>
+            <div class="sav-alltime-item">
+              <div class="sav-alltime-icon">📱</div>
+              <div class="sav-alltime-val" id="hjem-iphone">0 opl.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bund: Automatisk + Swipe -->
+    <div class="hjem-swipe-wrap">
+      <button class="auto-btn" id="auto-btn" onclick="toggleAuto()">
+        <span class="auto-dot" id="auto-dot"></span>
+        <span id="auto-lbl">Automatisk tilstand</span>
+      </button>
+      <div class="swipe-track" id="swipe-track">
+        <div class="swipe-thumb" id="swipe-thumb"></div>
+        <span class="swipe-lbl" id="swipe-lbl">Tilslut elbil →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STRØM -->
+  <div class="screen" id="screen-strom" style="display:none">
+    <div class="screen-header">Strøm</div>
+
+    <div class="card">
+      <div class="card-lbl">Pris lige nu</div>
+      <div class="strom-now">
+        <span class="strom-price" id="strom-price">—</span>
+        <span class="strom-unit">kr/kWh</span>
+      </div>
+      <div class="strom-tag" id="strom-tag">—</div>
+    </div>
+
+    <div class="card">
+      <div class="card-lbl">Energisammensætning</div>
+      <div class="emix-list">
+        <div class="emix-row">
+          <span class="emix-name">Vind, vand &amp; sol</span>
+          <div class="emix-bar-wrap"><div class="emix-bar" id="emix-vind" style="background:#22c55e"></div></div>
+          <span class="emix-pct" id="emix-vind-pct">—%</span>
+        </div>
+        <div class="emix-row">
+          <span class="emix-name">Biomasse &amp; affald</span>
+          <div class="emix-bar-wrap"><div class="emix-bar" id="emix-bio" style="background:#84cc16"></div></div>
+          <span class="emix-pct" id="emix-bio-pct">—%</span>
+        </div>
+        <div class="emix-row">
+          <span class="emix-name">Naturgas</span>
+          <div class="emix-bar-wrap"><div class="emix-bar" id="emix-gas" style="background:#f97316"></div></div>
+          <span class="emix-pct" id="emix-gas-pct">—%</span>
+        </div>
+        <div class="emix-row">
+          <span class="emix-name">Kul</span>
+          <div class="emix-bar-wrap"><div class="emix-bar" id="emix-kul" style="background:#6b7a99"></div></div>
+          <span class="emix-pct" id="emix-kul-pct">—%</span>
+        </div>
+        <div class="emix-row">
+          <span class="emix-name">Atomkraft</span>
+          <div class="emix-bar-wrap"><div class="emix-bar" id="emix-atom" style="background:#a855f7"></div></div>
+          <span class="emix-pct" id="emix-atom-pct">—%</span>
+        </div>
+        <div class="emix-row">
+          <span class="emix-name">Olie</span>
+          <div class="emix-bar-wrap"><div class="emix-bar" id="emix-olie" style="background:#ef4444"></div></div>
+          <span class="emix-pct" id="emix-olie-pct">—%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card chart-card">
+      <div class="card-lbl">Prisprognose i dag</div>
+      <svg id="price-chart" width="100%" height="120"></svg>
+      <div class="chart-legend">
+        <span class="legend-now">● Nu</span>
+        <span class="legend-cheap">● Billigst</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILBATTERI -->
+  <div class="screen" id="screen-batteri" style="display:none">
+    <div class="screen-header">Bilbatteri</div>
+
+    <div class="batt-arc-wrap">
+      <svg viewBox="0 0 200 110" class="batt-svg">
+        <path id="batt-track" d="M15,105 A95,95 0 0,1 185,105" fill="none" stroke-width="16" stroke-linecap="round"/>
+        <path id="batt-fill" d="M15,105 A95,95 0 0,1 185,105" fill="none" stroke-width="16" stroke-linecap="round"/>
+      </svg>
+      <div class="batt-pct" id="batt-pct">95%</div>
+      <div class="batt-km" id="batt-km">— km</div>
+    </div>
+
+    <div class="card">
+      <div class="card-lbl">Minimumsgrænse</div>
+      <div class="min-row">
+        <span class="min-label">Gå ikke under</span>
+        <span class="min-val" id="min-val-lbl">20%</span>
+      </div>
+      <input type="range" id="min-slider" min="0" max="90" value="20" class="min-slider">
+      <p class="min-hint">Bevarer strøm til spontan køretur</p>
+    </div>
+
+    <div class="card">
+      <div class="card-lbl">Batteritilstand</div>
+      <div class="health-row">
+        <div class="health-bar-wrap">
+          <div class="health-bar" id="health-bar"></div>
+        </div>
+        <span class="health-pct" id="health-pct">—%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BESPARELSE -->
+  <div class="screen" id="screen-besparelse" style="display:none">
+    <div class="screen-header">Besparelse</div>
+
+    <!-- All time -->
+    <div class="sav-section-lbl">All time besparelser</div>
+    <div class="sav-cards">
+      <div class="sav-card">
+        <div class="sav-icon">💰</div>
+        <div class="sav-val" id="sav-kr">0,00</div>
+        <div class="sav-lbl">kr. i alt</div>
+      </div>
+      <div class="sav-card">
+        <div class="sav-icon">📱</div>
+        <div class="sav-val" id="sav-iphone">0</div>
+        <div class="sav-lbl">opl. i alt</div>
+      </div>
+    </div>
+
+    <!-- Estimeret besparelse fra onboarding -->
+    <div class="card" id="sim-est-card" style="display:none">
+      <div class="card-lbl">Estimeret besparelse</div>
+      <div class="sav-cards" style="margin-bottom:8px">
+        <div class="sav-card">
+          <div class="sav-val" id="sim-md-kr">—</div>
+          <div class="sav-lbl">kr./md.</div>
+        </div>
+        <div class="sav-card">
+          <div class="sav-val" id="sim-aar-kr">—</div>
+          <div class="sav-lbl">kr./år</div>
+        </div>
+      </div>
+      <p class="sim-est-detail">Din gennemsnitspris: <span id="sim-elpris">—</span> kr/kWh &middot; Natpris: 1,32 kr/kWh</p>
+    </div>
+
+    <!-- Simulator + Wheel i bunden -->
+    <div class="wheel-bottom">
+      <div class="sav-section-lbl">Besparelse simulator</div>
+      <div class="sim-cards">
+        <div class="sim-card">
+          <div class="sim-val" id="wheel-kr">—</div>
+          <div class="sim-lbl">kr. ved <span id="wheel-uger-lbl">1</span> uge</div>
+        </div>
+        <div class="sim-card">
+          <div class="sim-val" id="wheel-opl">—</div>
+          <div class="sim-lbl">Emissionsbesparelse i telefonopladninger</div>
+        </div>
+      </div>
+      <div class="week-strip">
+        <div class="week-drum" id="week-drum" onclick="wheelCenterClick()">
+          <span class="week-drum-arrow">▲</span>
+          <input id="wheel-weeks-input" type="number" min="1" max="520" value="1" oninput="wheelInputChange(this.value)" onblur="wheelInputBlur()">
+          <span class="week-drum-arrow">▼</span>
+        </div>
+        <div class="week-strip-right">
+          <div class="week-strip-val" id="wheel-uger-lbl">1 uge</div>
+          <div class="week-strip-hint">Træk op/ned · eller tast tal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKOVEN -->
+  <div class="screen" id="screen-skoven" style="display:none">
+    <div class="screen-header">Skoven</div>
+    <div class="card">
+      <div class="card-lbl">Din skov</div>
+      <p class="forest-intro">Du har sparet emission svarende til</p>
+      <div class="forest-stat">
+        <div class="forest-num" id="forest-trees">—</div>
+        <div class="forest-lbl">træers årlige CO₂-optag</div>
+      </div>
+      <div class="forest-progress-wrap">
+        <div class="forest-progress-bar" id="forest-bar"></div>
+      </div>
+      <div class="forest-next" id="forest-next">Estimat baseret på din CO₂-besparelse</div>
+    </div>
+    <div class="forest-scene" id="forest-scene"></div>
+    <div class="card" style="margin-top:auto">
+      <div class="card-lbl">Hvad betyder det?</div>
+      <p class="forest-desc" id="forest-tree-desc">Din estimerede CO₂-besparelse svarer til <strong id="trees-low">—</strong> bøgetræers årlige CO₂-optag.</p>
+      <p class="co2-note" style="margin-top:8px">Baseret på bøgetræ: 15 kg CO₂-optag pr. træ pr. år (illustrativt estimat).</p>
+    </div>
+
+    <div class="card" id="co2-card" style="display:none">
+      <div class="card-lbl">CO₂-estimat</div>
+      <div class="co2-rows">
+        <div class="co2-row">
+          <span class="co2-lbl">Flyttet el pr. år</span>
+          <span class="co2-val" id="co2-kwh">—</span>
+        </div>
+        <div class="co2-row">
+          <span class="co2-lbl">CO₂-påvirkning (estimat)</span>
+          <span class="co2-val" id="co2-affected">—</span>
+        </div>
+        <div class="co2-row">
+          <span class="co2-lbl">CO₂-besparelse (estimat)*</span>
+          <span class="co2-val co2-green" id="co2-saving">—</span>
+        </div>
+        <div class="co2-row" style="border-top:1px solid rgba(255,255,255,.08);padding-top:8px;margin-top:2px">
+          <span class="co2-lbl">CO₂ pr. fuld opladning*</span>
+          <span class="co2-val" id="co2-per-charge">4,16 kg CO₂e</span>
+        </div>
+      </div>
+      <p class="co2-note">*Simpelt estimat — ikke en præcis måling. Baseret på Energistyrelsens faktor 69,3 g CO₂e/kWh (DK1 2026). CO₂-besparelse antager 20% renere natstrøm.</p>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav id="bottom-nav">
+    <button class="nav-btn active" onclick="navTo('hjem',this)">
+      <svg viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v9h5v-5h4v5h5v-9"/></svg>
+      <span>Hjem</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('strom',this)">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span>Strøm</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('batteri',this)">
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v3"/></svg>
+      <span>Batteri</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('besparelse',this)">
+      <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      <span>Besparelse</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('skoven',this)">
+      <svg viewBox="0 0 24 24"><path d="M12 2L8 9H4l8 6-3 7 3-2 3 2-3-7 8-6h-4z" fill="currentColor" stroke="none"/></svg>
+      <span>Skoven</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toast"></div>
+
+<div id="dlg">
+  <div class="dlg-box">
+    <h2>Batteri ved grænse</h2>
+    <p>Elbilen er frakoblet. Vil du fortsætte til 0%?</p>
+    <div class="dlg-btns">
+      <button class="dlg-btn-ok" onclick="doFortsaet()">Fortsæt til 0%</button>
+      <button class="dlg-btn-cancel" onclick="doFrakobl()">Frakobl</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+
+</div><!-- iphone-screen -->
+<div id="iphone-home"></div>
+</div><!-- iphone-frame -->
+</body>
+</html>
