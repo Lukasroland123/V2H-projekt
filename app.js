@@ -38,14 +38,8 @@ var AUTO_THRESHOLD = 100; // øre/kWh — slår til under denne pris
 
 // ── INIT ───────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', function() {
-  if (location.search.indexOf('reset') !== -1) localStorage.removeItem('v2h_onboarding');
-  var saved = localStorage.getItem('v2h_onboarding');
-  if (saved) {
-    try { ob = JSON.parse(saved); } catch(e) {}
-    showApp();
-  } else {
-    showOnboarding();
-  }
+  localStorage.removeItem('v2h_onboarding');
+  showOnboarding();
   initSwipe();
   initWheel();
   setInterval(updateClock, 1000);
