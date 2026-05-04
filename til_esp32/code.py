@@ -28,16 +28,16 @@ print("Server klar")
 pixels = neopixel.NeoPixel(board.A2, 30, brightness=0.2, auto_write=False, pixel_order=neopixel.GRB)
 relay = DigitalInOut(board.A1)
 relay.direction = Direction.OUTPUT
-button = DigitalInOut(board.A0)
+button = DigitalInOut(board.SDA)
 button.direction = Direction.INPUT
 button.pull = Pull.UP
-
-# Legehus hardware
-legehus = neopixel.NeoPixel(board.A3, 4, brightness=0.3, auto_write=False, pixel_order=neopixel.GRB)
 
 bil_button = DigitalInOut(board.TX)
 bil_button.direction = Direction.INPUT
 bil_button.pull = Pull.UP
+
+# Legehus hardware
+legehus = neopixel.NeoPixel(board.A3, 4, brightness=0.3, auto_write=False, pixel_order=neopixel.GRB)
 
 stikontakt_button = DigitalInOut(board.RX)
 stikontakt_button.direction = Direction.INPUT
@@ -57,7 +57,7 @@ last_tick = time.monotonic()
 
 legehus_lights_on = False
 car_connected = False
-last_bil_button = True
+last_barrel_in = True
 last_stikontakt = True
 car_flash_until = 0        # tidspunkt hvor blink-animation slutter
 FLASH_INTERVAL = 0.3       # sekunder pr. blink-fase
@@ -148,15 +148,19 @@ while True:
 
     # El-bils knap — tænder legehus-lys og starter V2H
     current_bil = bil_button.value
-    if last_bil_button and not current_bil:
+    if last_barrel_in and not current_bil:
         time.sleep(0.05)
         if not bil_button.value:
-            legehus_lights_on = True
-            car_connected = True
-            v2h_active = True
-            auto_stop = False
-            car_flash_until = now + 1.8   # 6 blink à 0.3s
-    last_bil_button = current_bil
+            if not car_connected:
+                legehus_lights_on = True
+                car_connected = True
+                v2h_active = True
+                auto_stop = False
+                car_flash_until = now + 1.8
+            else:
+                car_connected = False
+                v2h_active = False
+    last_barrel_in = current_bil
 
     # Stikontakt — toggle legehus-lys uafhængigt af V2H
     current_stikontakt = stikontakt_button.value

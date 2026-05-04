@@ -140,7 +140,7 @@ function showSummary() {
 
   var minSoc = ob.aftensture === 'sjældent' ? 15 : ob.aftensture === 'ofte' ? 30 : 20;
   var elpris = ob.kwh_forbrug > 0 ? ob.elregning / ob.kwh_forbrug : 2.06;
-  var mSav = Math.round(ob.kwh_forbrug * 0.90 * (elpris - 1.32));
+  var mSav = Math.max(35, Math.round(ob.kwh_forbrug * 0.90 * (elpris - 1.32)));
 
   document.getElementById('sum-elpris').textContent = elpris.toFixed(2).replace('.', ',') + ' kr/kWh';
   document.getElementById('sum-besparelse').textContent = mSav + ' kr./md.';
@@ -573,7 +573,7 @@ function updateSimulator() {
   if (!ob.done || !ob.kwh_forbrug) { card.style.display = 'none'; return; }
   card.style.display = '';
   var elpris = ob.elpris || (ob.kwh_forbrug > 0 ? ob.elregning / ob.kwh_forbrug : 2.06);
-  var mSav = Math.round(ob.kwh_forbrug * 0.90 * (elpris - 1.32));
+  var mSav = Math.max(35, Math.round(ob.kwh_forbrug * 0.90 * (elpris - 1.32)));
   var aSav = mSav * 12;
   var mdEl = document.getElementById('sim-md-kr');
   var aarEl = document.getElementById('sim-aar-kr');
