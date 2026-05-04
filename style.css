@@ -215,6 +215,9 @@ html,body{
   letter-spacing:.02em;
 }
 .swipe-track.on .swipe-lbl{color:var(--rd);padding-left:0;padding-right:68px}
+.swipe-track.locked{border-color:rgba(255,255,255,.15);box-shadow:none;opacity:.45;cursor:default;}
+.swipe-track.locked .swipe-thumb{background:radial-gradient(circle at 35% 35%,#888,#444);box-shadow:none;}
+.swipe-track.locked .swipe-lbl{color:rgba(255,255,255,.5);padding-left:0;text-align:center;font-size:13px;}
 .hjem-cards{display:flex;gap:10px}
 .mini-card{
   flex:1;background:rgba(10,16,28,.60);

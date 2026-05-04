@@ -280,7 +280,13 @@ function updateHjem(s) {
   var track = document.getElementById('swipe-track');
   var thumb = document.getElementById('swipe-thumb');
   var lbl = document.getElementById('swipe-lbl');
-  if (s.v2h_active) {
+  if (!s.car_connected) {
+    track.classList.remove('on');
+    track.classList.add('locked');
+    thumb.style.left = '6px';
+    lbl.textContent = 'Kør bilen ind for at starte';
+  } else if (s.v2h_active) {
+    track.classList.remove('locked');
     track.classList.add('on');
     if (track) {
       var tw = track.offsetWidth || 280;
@@ -288,6 +294,7 @@ function updateHjem(s) {
     }
     lbl.textContent = '← Frakobl elbil';
   } else {
+    track.classList.remove('locked');
     track.classList.remove('on');
     thumb.style.left = '6px';
     lbl.textContent = 'Tilslut elbil →';
@@ -314,6 +321,7 @@ function initSwipe() {
     if (startX === null) return;
     var x = (e.changedTouches ? e.changedTouches[0].clientX : e.clientX);
     var diff = x - startX;
+    if (!state.car_connected) { startX = null; dragging = false; return; }
     if (!dragging) {
       toggleV2H();
     } else if (!state.v2h_active && diff > 40) {
