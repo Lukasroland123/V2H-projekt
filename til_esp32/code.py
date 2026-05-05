@@ -25,7 +25,7 @@ server.setblocking(False)
 print("Server klar")
 
 # Hardware
-pixels = neopixel.NeoPixel(board.A2, 30, brightness=0.2, auto_write=False, pixel_order=neopixel.GRB)
+pixels = neopixel.NeoPixel(board.A2, 6, brightness=0.1, auto_write=False, pixel_order=neopixel.RGB)
 relay = DigitalInOut(board.A1)
 relay.direction = Direction.OUTPUT
 button = DigitalInOut(board.SDA)
@@ -37,7 +37,7 @@ bil_button.direction = Direction.INPUT
 bil_button.pull = Pull.UP
 
 # Legehus hardware
-legehus = neopixel.NeoPixel(board.A3, 4, brightness=0.3, auto_write=False, pixel_order=neopixel.GRB)
+legehus = neopixel.NeoPixel(board.A3, 3, brightness=0.1, auto_write=False, pixel_order=neopixel.RGB)
 
 stikontakt_button = DigitalInOut(board.RX)
 stikontakt_button.direction = Direction.INPUT
@@ -59,8 +59,6 @@ legehus_lights_on = False
 car_connected = False
 last_barrel_in = True
 last_stikontakt = True
-car_flash_until = 0        # tidspunkt hvor blink-animation slutter
-FLASH_INTERVAL = 0.3       # sekunder pr. blink-fase
 
 buf = bytearray(2048)
 
@@ -146,17 +144,14 @@ while True:
                 auto_stop = False
     last_button = current_button
 
-    # El-bils knap — tænder legehus-lys og starter V2H
+    # El-bils knap (team-kontrolleret) — låser swipe op/ned i appen
     current_bil = bil_button.value
     if last_barrel_in and not current_bil:
         time.sleep(0.05)
         if not bil_button.value:
             if not car_connected:
-                legehus_lights_on = True
                 car_connected = True
-                v2h_active = True
                 auto_stop = False
-                car_flash_until = now + 1.8
             else:
                 car_connected = False
                 v2h_active = False
@@ -170,8 +165,8 @@ while True:
             legehus_lights_on = not legehus_lights_on
     last_stikontakt = current_stikontakt
 
-    # Opdater state når V2H er aktiv
-    if v2h_active:
+    # Tæller kun når V2H er aktivt OG lyset er tændt
+    if v2h_active and legehus_lights_on:
         battery_soc = max(0.0, battery_soc - 0.1 * dt)   # ~12 min fra 95% til 20%
         kwh = (2000.0 / 3600.0 / 1000.0) * dt            # 2 kW simuleret forbrug
         savings_kwh += kwh
@@ -187,8 +182,8 @@ while True:
             car_connected = False
             auto_stop = False
 
-    # Hardware
-    if v2h_active:
+    # Hardware — relay og grøn strip kun aktiv når begge betingelser er opfyldt
+    if v2h_active and legehus_lights_on:
         relay.value = True
         pixels.fill((0, 255, 0))
     else:
@@ -197,10 +192,7 @@ while True:
     pixels.show()
 
     # Legehus lys
-    if now < car_flash_until:
-        phase = int((car_flash_until - now) / FLASH_INTERVAL) % 2
-        legehus.fill((255, 200, 0) if phase == 0 else (0, 0, 0))
-    elif legehus_lights_on:
+    if legehus_lights_on:
         legehus.fill((255, 180, 80))
     else:
         legehus.fill((0, 0, 0))
@@ -234,8 +226,9 @@ while True:
             send_response(conn, "200 OK", "application/json", json.dumps(status))
 
         elif path.startswith("/on"):
-            v2h_active = True
-            auto_stop = False
+            if car_connected:
+                v2h_active = True
+                auto_stop = False
             send_response(conn, "200 OK", "application/json", '{"ok":true}')
 
         elif path.startswith("/off"):

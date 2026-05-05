@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta charset="utf-8">
+<title>V2H</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-progress" id="ob-dots"></div>
+
+  <div class="ob-step" id="ob-step-1">
+    <div class="ob-icon">💡</div>
+    <h2>Hvad betaler du i el om måneden?</h2>
+    <p class="ob-sub">Vi bruger det til at beregne din potentielle besparelse</p>
+    <div class="ob-input-wrap">
+      <input type="number" id="inp-elregning" placeholder="fx 800" min="0" max="9999">
+      <span class="ob-unit">kr./md.</span>
+    </div>
+    <button class="ob-next" onclick="obNext(1)">Fortsæt</button>
+  </div>
+
+  <div class="ob-step" id="ob-step-2" style="display:none">
+    <div class="ob-icon">🚗</div>
+    <h2>Hvor mange km kører du typisk på en arbejdsdag?</h2>
+    <p class="ob-sub">Til og fra arbejde samlet</p>
+    <div class="ob-input-wrap">
+      <input type="number" id="inp-km" placeholder="fx 40" min="0" max="999">
+      <span class="ob-unit">km/dag</span>
+    </div>
+    <button class="ob-next" onclick="obNext(2)">Fortsæt</button>
+  </div>
+
+  <div class="ob-step" id="ob-step-3" style="display:none">
+    <div class="ob-icon">👨‍👩‍👧</div>
+    <h2>Hvor mange personer er I i husstanden?</h2>
+    <p class="ob-sub">Hjælper os estimere jeres forbrug</p>
+    <div class="ob-stepper">
+      <button class="step-btn" onclick="stepperChange(-1)">−</button>
+      <span id="stepper-val">2</span>
+      <button class="step-btn" onclick="stepperChange(1)">+</button>
+    </div>
+    <button class="ob-next" onclick="obNext(3)">Fortsæt</button>
+  </div>
+
+  <div class="ob-step" id="ob-step-4" style="display:none">
+    <div class="ob-icon">🔌</div>
+    <h2>Kan du lade bilen hjemme?</h2>
+    <p class="ob-sub">Fx med en ladeboks eller stikkontakt</p>
+    <div class="ob-choices">
+      <button class="ob-choice" id="ch-ja" onclick="setChoice('hjemoplad','ja',this)">Ja</button>
+      <button class="ob-choice" id="ch-nej" onclick="setChoice('hjemoplad','nej',this)">Nej</button>
+    </div>
+    <button class="ob-next" onclick="obNext(4)">Fortsæt</button>
+  </div>
+
+  <div class="ob-step" id="ob-step-5" style="display:none">
+    <div class="ob-icon">🌙</div>
+    <h2>Tager du spontane aftenture i bilen?</h2>
+    <p class="ob-sub">Vi bruger det til at anbefale en minimumsgrænse</p>
+    <div class="ob-choices three">
+      <button class="ob-choice" onclick="setChoice('aftensture','sjældent',this)">Sjældent</button>
+      <button class="ob-choice" onclick="setChoice('aftensture','nogle',this)">Nogle gange</button>
+      <button class="ob-choice" onclick="setChoice('aftensture','ofte',this)">Ofte</button>
+    </div>
+    <button class="ob-next" onclick="obNext(5)">Se dit estimat</button>
+  </div>
+
+  <div class="ob-step" id="ob-summary" style="display:none">
+    <div class="ob-icon">✅</div>
+    <h2>Vi har lavet dit personlige estimat</h2>
+    <div class="ob-summary-card">
+      <div class="ob-sum-row">
+        <span class="ob-sum-lbl">Potentiel besparelse</span>
+        <span class="ob-sum-val" id="sum-besparelse">—</span>
+      </div>
+      <div class="ob-sum-row">
+        <span class="ob-sum-lbl">Anbefalet minimumsgrænse</span>
+        <span class="ob-sum-val" id="sum-min">—</span>
+      </div>
+    </div>
+    <p class="ob-fine">Baseret på at 40% af dit forbrug flyttes til billig strøm via V2H</p>
+    <button class="ob-next" onclick="obFinish()">Kom i gang</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" style="display:none">
+
+  <!-- HJEM -->
+  <div class="screen" id="screen-hjem">
+    <div class="screen-top">
+      <div id="clk-time">--:--</div>
+      <div id="clk-date">—</div>
+    </div>
+
+    <div class="hjem-body">
+      <!-- Price gauge left -->
+      <div class="gauge-wrap">
+        <div class="gauge-bar" id="gauge-bar">
+          <div class="gauge-marker" id="gauge-marker"></div>
+        </div>
+        <div class="gauge-label" id="gauge-label">— øre/kWh</div>
+        <div class="gauge-status" id="gauge-status">—</div>
+      </div>
+
+      <!-- Center content -->
+      <div class="hjem-center">
+        <div class="status-text" id="hjem-status-txt">Huset bruger almindelig netstrøm</div>
+
+        <!-- Swipe toggle -->
+        <div class="swipe-track" id="swipe-track">
+          <div class="swipe-thumb" id="swipe-thumb"></div>
+          <span class="swipe-lbl" id="swipe-lbl">Tilslut elbil →</span>
+        </div>
+
+        <!-- Mini cards -->
+        <div class="hjem-cards">
+          <div class="mini-card">
+            <div class="mini-card-lbl">Batteri</div>
+            <div class="mini-card-val" id="hjem-soc">95%</div>
+            <div class="mini-card-sub" id="hjem-km">— km</div>
+          </div>
+          <div class="mini-card">
+            <div class="mini-card-lbl">Strømpris</div>
+            <div class="mini-card-val" id="hjem-price">— øre</div>
+            <div class="mini-card-sub" id="hjem-price-lbl">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STRØM -->
+  <div class="screen" id="screen-strom" style="display:none">
+    <div class="screen-header">Strøm</div>
+
+    <div class="card">
+      <div class="card-lbl">Pris lige nu</div>
+      <div class="strom-now">
+        <span class="strom-price" id="strom-price">—</span>
+        <span class="strom-unit">øre/kWh</span>
+      </div>
+      <div class="strom-tag" id="strom-tag">—</div>
+    </div>
+
+    <div class="card">
+      <div class="card-lbl">Vedvarende energi</div>
+      <div class="green-row">
+        <div class="green-bar-wrap">
+          <div class="green-bar" id="green-bar"></div>
+        </div>
+        <span class="green-pct" id="green-pct">—%</span>
+      </div>
+      <div class="green-sub" id="green-sub">—</div>
+    </div>
+
+    <div class="card chart-card">
+      <div class="card-lbl">Prisprognose i dag</div>
+      <svg id="price-chart" width="100%" height="120"></svg>
+      <div class="chart-legend">
+        <span class="legend-now">● Nu</span>
+        <span class="legend-cheap">● Billigst</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILBATTERI -->
+  <div class="screen" id="screen-batteri" style="display:none">
+    <div class="screen-header">Bilbatteri</div>
+
+    <div class="batt-arc-wrap">
+      <svg viewBox="0 0 200 120" class="batt-svg">
+        <path id="batt-track" d="M20,110 A90,90 0 0,1 180,110" fill="none" stroke-width="14" stroke-linecap="round"/>
+        <path id="batt-fill" d="M20,110 A90,90 0 0,1 180,110" fill="none" stroke-width="14" stroke-linecap="round"/>
+      </svg>
+      <div class="batt-arc-center">
+        <div class="batt-pct" id="batt-pct">95%</div>
+        <div class="batt-km" id="batt-km">— km</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-lbl">Minimumsgrænse</div>
+      <div class="min-row">
+        <span class="min-label">Gå ikke under</span>
+        <span class="min-val" id="min-val-lbl">20%</span>
+      </div>
+      <input type="range" id="min-slider" min="0" max="90" value="20" class="min-slider">
+      <p class="min-hint">Bevarer strøm til spontan køretur</p>
+    </div>
+
+    <div class="card">
+      <div class="card-lbl">Batteritilstand</div>
+      <div class="health-row">
+        <div class="health-bar-wrap">
+          <div class="health-bar" id="health-bar"></div>
+        </div>
+        <span class="health-pct" id="health-pct">—%</span>
+      </div>
+      <div class="health-note">Systemet går ikke under grænsen uden din tilladelse</div>
+    </div>
+  </div>
+
+  <!-- BESPARELSE -->
+  <div class="screen" id="screen-besparelse" style="display:none">
+    <div class="screen-header">Besparelse</div>
+
+    <div class="sav-period-tabs">
+      <button class="sav-tab active" onclick="setSavPeriod('dag',this)">Dag</button>
+      <button class="sav-tab" onclick="setSavPeriod('uge',this)">Uge</button>
+      <button class="sav-tab" onclick="setSavPeriod('måned',this)">Måned</button>
+      <button class="sav-tab" onclick="setSavPeriod('år',this)">År</button>
+    </div>
+
+    <div class="wheel-wrap">
+      <div class="wheel" id="wheel">
+        <div class="wheel-inner">
+          <div class="wheel-spoke" style="--a:0deg"></div>
+          <div class="wheel-spoke" style="--a:45deg"></div>
+          <div class="wheel-spoke" style="--a:90deg"></div>
+          <div class="wheel-spoke" style="--a:135deg"></div>
+          <div class="wheel-spoke" style="--a:180deg"></div>
+          <div class="wheel-spoke" style="--a:225deg"></div>
+          <div class="wheel-spoke" style="--a:270deg"></div>
+          <div class="wheel-spoke" style="--a:315deg"></div>
+        </div>
+        <div class="wheel-center-ring"></div>
+      </div>
+    </div>
+
+    <div class="sav-cards">
+      <div class="sav-card">
+        <div class="sav-icon">💰</div>
+        <div class="sav-val" id="sav-kr">0,00</div>
+        <div class="sav-lbl">kr. sparet</div>
+      </div>
+      <div class="sav-card">
+        <div class="sav-icon">📱</div>
+        <div class="sav-val" id="sav-iphone">0</div>
+        <div class="sav-lbl">opladninger</div>
+      </div>
+    </div>
+
+    <div class="sav-note" id="sav-note">Faktisk besparelse i dag</div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav id="bottom-nav">
+    <button class="nav-btn active" onclick="navTo('hjem',this)">
+      <svg viewBox="0 0 24 24"><path d="M3 12L12 3l9 9M5 10v9h5v-5h4v5h5v-9"/></svg>
+      <span>Hjem</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('strom',this)">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span>Strøm</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('batteri',this)">
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M22 11v3"/></svg>
+      <span>Batteri</span>
+    </button>
+    <button class="nav-btn" onclick="navTo('besparelse',this)">
+      <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      <span>Besparelse</span>
+    </button>
+  </nav>
+</div>
+
+<!-- AUTO-STOP DIALOG -->
+<dialog id="dlg">
+  <h2>Batteri ved grænse</h2>
+  <p>Elbilen er nået ned til minimumsgrænsen. Vil du fortsætte alligevel?</p>
+  <div class="dlg-btns">
+    <button class="dlg-btn-ok" onclick="doFortsaet()">Fortsæt</button>
+    <button class="dlg-btn-cancel" onclick="doStop()">Stop</button>
+  </div>
+</dialog>
+
+<script src="app.js"></script>
+</body>
+</html>

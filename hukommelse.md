@@ -24,8 +24,8 @@ Universitetsprojekt i Brugerdrevet Design. Fysisk miniatureprototype af V2H (Veh
 - **LED strip V2H strip:** board.A2, 30 pixels — grøn når V2H aktiv
 - **LED strip legehus strip:** board.A3, 4 pixels — varm hvid lys
 - **V2H relay:** board.A1
-- **V2H toggle-knap:** board.A0
-- **El-bils knap:** board.TX — tænder legehus-lys + starter V2H + gult blink
+- **V2H toggle-knap:** board.SDA (fysisk ikke tilsluttet)
+- **Barrel-stik detektion (bil-tilslutning):** board.A0 analog — A0 og GND fra barrel-jack — lav værdi = stik sat i
 - **Stikontakt-knap:** board.RX — toggler legehus-lys uafhængigt
 
 ---
@@ -33,8 +33,9 @@ Universitetsprojekt i Brugerdrevet Design. Fysisk miniatureprototype af V2H (Veh
 ## Aftalte funktioner / designbeslutninger
 
 ### Swipe-knap låst til fysisk bil-tilslutning
-Swipe-knappen i appen er **disabled (grå/locked)** indtil den fysiske bil-knap (TX) er trykket — dvs. bilen "køres ind i ladestikket". Når bilen er tilsluttet låses swipe op. Når batteri når 0% frakobles automatisk og swipe låses igen.
+Swipe-knappen i appen er **disabled (grå/locked)** indtil barrel-stikket (bilen) sættes i. Når trukket ud låses den igen automatisk.
 - `car_connected` state i code.py styrer dette
+- Detekteres via **analog A0** — når `barrel_pin.value < 5000` = stik sat i
 - `locked` CSS-klasse på `.swipe-track` når ikke tilsluttet
 
 ### Batteri når minimumsgrænse → dialog

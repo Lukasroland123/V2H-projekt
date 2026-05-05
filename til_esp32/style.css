@@ -1,0 +1,239 @@
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0e1117;--card:#161b27;--bd:#1f2737;
+  --tx:#f0f4ff;--mu:#6b7a99;
+  --gn:#22c55e;--yl:#eab308;--rd:#ef4444;--bl:#3b82f6;
+}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:system-ui,sans-serif;overflow:hidden}
+
+/* ── ONBOARDING ─────────────────────────────────── */
+#onboarding{
+  position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:flex-start;padding:60px 28px 40px;overflow-y:auto;
+}
+.ob-progress{display:flex;gap:8px;margin-bottom:40px}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--bd);transition:background .3s}
+.ob-dot.active{background:var(--bl)}
+.ob-step{width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+.ob-icon{font-size:52px;margin-bottom:4px}
+.ob-step h2{font-size:22px;font-weight:700;line-height:1.3}
+.ob-sub{font-size:14px;color:var(--mu);line-height:1.5}
+.ob-input-wrap{position:relative;width:100%;margin:8px 0}
+.ob-input-wrap input{
+  width:100%;padding:18px 60px 18px 20px;font-size:24px;font-weight:700;
+  background:var(--card);border:2px solid var(--bd);border-radius:16px;
+  color:var(--tx);outline:none;text-align:center;font-family:inherit;
+}
+.ob-input-wrap input:focus{border-color:var(--bl)}
+.ob-unit{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--mu)}
+.ob-stepper{display:flex;align-items:center;gap:24px;margin:12px 0}
+.step-btn{
+  width:52px;height:52px;border-radius:50%;border:2px solid var(--bd);
+  background:var(--card);color:var(--tx);font-size:24px;cursor:pointer;
+}
+#stepper-val{font-size:48px;font-weight:800;min-width:60px;text-align:center}
+.ob-choices{display:flex;gap:12px;width:100%;margin:8px 0}
+.ob-choices.three{flex-direction:column}
+.ob-choice{
+  flex:1;padding:16px;border-radius:14px;border:2px solid var(--bd);
+  background:var(--card);color:var(--tx);font-size:16px;font-weight:600;
+  cursor:pointer;transition:all .2s;font-family:inherit;
+}
+.ob-choice.selected{border-color:var(--bl);background:rgba(59,130,246,.15);color:var(--bl)}
+.ob-next{
+  width:100%;padding:18px;border-radius:50px;border:none;
+  background:var(--bl);color:#fff;font-size:17px;font-weight:700;
+  cursor:pointer;margin-top:8px;font-family:inherit;
+}
+.ob-summary-card{
+  width:100%;background:var(--card);border:1px solid var(--bd);border-radius:16px;
+  padding:20px;margin:8px 0;
+}
+.ob-sum-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}
+.ob-sum-row:last-child{border-bottom:none}
+.ob-sum-lbl{font-size:14px;color:var(--mu)}
+.ob-sum-val{font-size:18px;font-weight:700;color:var(--gn)}
+.ob-fine{font-size:12px;color:var(--mu);text-align:center;line-height:1.5}
+
+/* ── APP SHELL ──────────────────────────────────── */
+#app{
+  position:fixed;inset:0;display:flex;flex-direction:column;
+  padding-bottom:60px;
+}
+.screen{flex:1;overflow-y:auto;padding:20px 20px 12px}
+.screen-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+#clk-time{font-size:28px;font-weight:700}
+#clk-date{font-size:13px;color:var(--mu);text-align:right;margin-top:4px}
+.screen-header{font-size:22px;font-weight:800;margin-bottom:20px}
+.card{
+  background:var(--card);border:1px solid var(--bd);border-radius:18px;
+  padding:16px 18px;margin-bottom:12px;
+}
+.card-lbl{font-size:11px;font-weight:600;color:var(--mu);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
+
+/* ── HJEM SCREEN ────────────────────────────────── */
+.hjem-body{display:flex;gap:16px;flex:1;align-items:flex-start;margin-top:4px}
+.gauge-wrap{
+  width:56px;min-width:56px;display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.gauge-bar{
+  width:28px;height:200px;border-radius:14px;
+  background:linear-gradient(to bottom,#ef4444,#f97316 30%,#eab308 55%,#22c55e);
+  position:relative;box-shadow:0 0 20px rgba(0,0,0,.3);
+}
+.gauge-marker{
+  position:absolute;left:-6px;right:-6px;height:4px;
+  background:#fff;border-radius:2px;
+  box-shadow:0 0 8px rgba(255,255,255,.8);transition:top .8s;
+  top:50%;
+}
+.gauge-label{font-size:11px;font-weight:700;color:var(--tx);text-align:center;line-height:1.2}
+.gauge-status{font-size:10px;color:var(--mu);text-align:center;line-height:1.3}
+.hjem-center{flex:1;display:flex;flex-direction:column;gap:14px}
+.status-text{
+  font-size:16px;font-weight:600;color:var(--tx);
+  background:var(--card);border:1px solid var(--bd);border-radius:14px;
+  padding:14px 16px;text-align:center;min-height:52px;display:flex;align-items:center;justify-content:center;
+}
+
+/* swipe toggle */
+.swipe-track{
+  position:relative;height:64px;background:var(--card);
+  border:2px solid var(--gn);border-radius:32px;overflow:hidden;cursor:pointer;
+  user-select:none;
+}
+.swipe-track.on{border-color:var(--rd);background:rgba(239,68,68,.1)}
+.swipe-track.locked{opacity:0.35;pointer-events:none;filter:grayscale(1)}
+.swipe-thumb{
+  position:absolute;top:6px;left:6px;width:52px;height:52px;
+  background:var(--gn);border-radius:50%;transition:left .3s,background .3s;
+  box-shadow:0 2px 12px rgba(34,197,94,.4);
+}
+.swipe-track.on .swipe-thumb{background:var(--rd);box-shadow:0 2px 12px rgba(239,68,68,.4)}
+.swipe-lbl{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:700;color:var(--gn);pointer-events:none;padding-left:64px;
+}
+.swipe-track.on .swipe-lbl{color:var(--rd);padding-left:0;padding-right:64px}
+.hjem-cards{display:flex;gap:10px}
+.mini-card{
+  flex:1;background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;
+}
+.mini-card-lbl{font-size:10px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.mini-card-val{font-size:20px;font-weight:800}
+.mini-card-sub{font-size:11px;color:var(--mu);margin-top:2px}
+
+/* ── STRØM SCREEN ───────────────────────────────── */
+.strom-now{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
+.strom-price{font-size:42px;font-weight:800}
+.strom-unit{font-size:15px;color:var(--mu)}
+.strom-tag{
+  display:inline-block;font-size:12px;font-weight:600;padding:4px 10px;
+  border-radius:20px;margin-top:4px;
+}
+.strom-tag.cheap{background:rgba(34,197,94,.15);color:var(--gn)}
+.strom-tag.mid{background:rgba(234,179,8,.15);color:var(--yl)}
+.strom-tag.exp{background:rgba(239,68,68,.15);color:var(--rd)}
+.green-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.green-bar-wrap{flex:1;height:10px;background:var(--bd);border-radius:5px;overflow:hidden}
+.green-bar{height:100%;background:var(--gn);border-radius:5px;transition:width .8s}
+.green-pct{font-size:15px;font-weight:700;color:var(--gn);min-width:36px;text-align:right}
+.green-sub{font-size:12px;color:var(--mu)}
+.chart-card{}
+#price-chart{display:block;overflow:visible}
+.chart-legend{display:flex;gap:16px;margin-top:8px;font-size:11px;color:var(--mu)}
+.legend-now{color:var(--bl)}
+.legend-cheap{color:var(--gn)}
+
+/* ── BATTERI SCREEN ─────────────────────────────── */
+.batt-arc-wrap{position:relative;width:220px;margin:0 auto 16px;display:flex;flex-direction:column;align-items:center}
+.batt-svg{overflow:visible}
+#batt-track{stroke:var(--bd)}
+#batt-fill{stroke:var(--bl);transition:stroke-dashoffset .8s,stroke .8s}
+.batt-arc-center{position:absolute;bottom:0;width:100%;text-align:center}
+.batt-pct{font-size:40px;font-weight:800}
+.batt-km{font-size:14px;color:var(--mu)}
+.min-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.min-label{font-size:14px;color:var(--mu)}
+.min-val{font-size:16px;font-weight:700;color:var(--rd)}
+.min-slider{
+  width:100%;height:4px;-webkit-appearance:none;appearance:none;
+  background:var(--bd);border-radius:2px;outline:none;margin-bottom:8px;
+}
+.min-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+  background:var(--rd);cursor:pointer;box-shadow:0 0 8px rgba(239,68,68,.5);
+}
+.min-hint{font-size:12px;color:var(--mu)}
+.health-row{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.health-bar-wrap{flex:1;height:10px;background:var(--bd);border-radius:5px;overflow:hidden}
+.health-bar{height:100%;background:var(--gn);border-radius:5px;transition:width .8s}
+.health-pct{font-size:15px;font-weight:700;color:var(--gn);min-width:36px;text-align:right}
+.health-note{font-size:11px;color:var(--mu)}
+
+/* ── BESPARELSE SCREEN ──────────────────────────── */
+.sav-period-tabs{display:flex;gap:8px;margin-bottom:16px}
+.sav-tab{
+  flex:1;padding:10px 4px;border-radius:10px;border:1px solid var(--bd);
+  background:var(--card);color:var(--mu);font-size:13px;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:all .2s;
+}
+.sav-tab.active{background:var(--bl);border-color:var(--bl);color:#fff}
+.wheel-wrap{display:flex;justify-content:center;margin:8px 0 16px}
+.wheel{
+  width:160px;height:160px;border-radius:50%;
+  border:3px solid var(--bd);position:relative;cursor:grab;
+  user-select:none;transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+}
+.wheel:active{cursor:grabbing}
+.wheel-inner{position:absolute;inset:0;border-radius:50%;overflow:hidden}
+.wheel-spoke{
+  position:absolute;top:50%;left:50%;width:50%;height:2px;
+  background:var(--bd);transform-origin:left center;
+  transform:rotate(var(--a));
+}
+.wheel-center-ring{
+  position:absolute;top:50%;left:50%;width:48px;height:48px;
+  border-radius:50%;background:var(--card);border:3px solid var(--bd);
+  transform:translate(-50%,-50%);
+}
+.sav-cards{display:flex;gap:12px;margin-bottom:10px}
+.sav-card{
+  flex:1;background:var(--card);border:1px solid var(--bd);border-radius:18px;
+  padding:18px 14px;text-align:center;
+}
+.sav-icon{font-size:28px;margin-bottom:6px}
+.sav-val{font-size:28px;font-weight:800;color:var(--gn)}
+.sav-lbl{font-size:11px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.07em;margin-top:4px}
+.sav-note{font-size:12px;color:var(--mu);text-align:center}
+
+/* ── BOTTOM NAV ─────────────────────────────────── */
+#bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;height:60px;
+  background:var(--card);border-top:1px solid var(--bd);
+  display:flex;align-items:stretch;
+}
+.nav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;border:none;background:transparent;color:var(--mu);cursor:pointer;
+  font-size:10px;font-family:inherit;font-weight:500;padding:0;
+}
+.nav-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn.active{color:var(--bl)}
+
+/* ── DIALOG ─────────────────────────────────────── */
+dialog{
+  background:var(--card);color:var(--tx);border:1px solid var(--bd);
+  border-radius:20px;padding:28px;max-width:300px;width:90%;
+  box-shadow:0 16px 48px rgba(0,0,0,.6);
+}
+dialog::backdrop{background:rgba(0,0,0,.7)}
+dialog h2{font-size:18px;margin-bottom:8px}
+dialog p{color:var(--mu);font-size:14px;line-height:1.5;margin-bottom:20px}
+.dlg-btns{display:flex;gap:10px}
+.dlg-btns button{
+  flex:1;padding:13px;border:none;border-radius:12px;
+  font-size:15px;cursor:pointer;font-weight:600;font-family:inherit;
+}
+.dlg-btn-ok{background:var(--gn);color:#fff}
+.dlg-btn-cancel{background:var(--bd);color:var(--mu)}
