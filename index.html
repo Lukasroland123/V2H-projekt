@@ -33,17 +33,6 @@
   <div class="ob-progress" id="ob-dots"></div>
 
   <div class="ob-step" id="ob-step-1">
-    <div class="ob-icon">⚡</div>
-    <h2>Hvad er dit elforbrug pr. kvartal?</h2>
-    <p class="ob-sub">Find "samlet forbrug" på din elregning — typisk opgjort pr. kvartal</p>
-    <div class="ob-input-wrap">
-      <input type="number" id="inp-kwh" placeholder="fx 1413" min="0" max="99999">
-      <span class="ob-unit">kWh/kvartal</span>
-    </div>
-    <button class="ob-next" onclick="obNext(1)">Fortsæt</button>
-  </div>
-
-  <div class="ob-step" id="ob-step-2" style="display:none">
     <div class="ob-icon">💡</div>
     <h2>Hvad betaler du i el pr. kvartal?</h2>
     <p class="ob-sub">Find det samlede beløb på din elregning for kvartalet</p>
@@ -51,10 +40,10 @@
       <input type="number" id="inp-elregning" placeholder="fx 2910" min="0" max="99999">
       <span class="ob-unit">kr./kvartal</span>
     </div>
-    <button class="ob-next" onclick="obNext(2)">Fortsæt</button>
+    <button class="ob-next" onclick="obNext(1)">Fortsæt</button>
   </div>
 
-  <div class="ob-step" id="ob-step-3" style="display:none">
+  <div class="ob-step" id="ob-step-2" style="display:none">
     <div class="ob-icon">🚗</div>
     <h2>Hvor mange km kører du typisk på en arbejdsdag?</h2>
     <p class="ob-sub">Til og fra arbejde samlet</p>
@@ -62,10 +51,10 @@
       <input type="number" id="inp-km" placeholder="fx 40" min="0" max="999">
       <span class="ob-unit">km/dag</span>
     </div>
-    <button class="ob-next" onclick="obNext(3)">Fortsæt</button>
+    <button class="ob-next" onclick="obNext(2)">Fortsæt</button>
   </div>
 
-  <div class="ob-step" id="ob-step-4" style="display:none">
+  <div class="ob-step" id="ob-step-3" style="display:none">
     <div class="ob-icon">👨‍👩‍👧</div>
     <h2>Hvor mange personer er I i husstanden?</h2>
     <p class="ob-sub">Hjælper os estimere jeres forbrug</p>
@@ -74,10 +63,10 @@
       <span id="stepper-val">2</span>
       <button class="step-btn" onclick="stepperChange(1)">+</button>
     </div>
-    <button class="ob-next" onclick="obNext(4)">Fortsæt</button>
+    <button class="ob-next" onclick="obNext(3)">Fortsæt</button>
   </div>
 
-  <div class="ob-step" id="ob-step-5" style="display:none">
+  <div class="ob-step" id="ob-step-4" style="display:none">
     <div class="ob-icon">🔌</div>
     <h2>Kan du lade bilen hjemme?</h2>
     <p class="ob-sub">Fx med en ladeboks eller stikkontakt</p>
@@ -85,10 +74,10 @@
       <button class="ob-choice" id="ch-ja" onclick="setChoice('hjemoplad','ja',this)">Ja</button>
       <button class="ob-choice" id="ch-nej" onclick="setChoice('hjemoplad','nej',this)">Nej</button>
     </div>
-    <button class="ob-next" onclick="obNext(5)">Fortsæt</button>
+    <button class="ob-next" onclick="obNext(4)">Fortsæt</button>
   </div>
 
-  <div class="ob-step" id="ob-step-6" style="display:none">
+  <div class="ob-step" id="ob-step-5" style="display:none">
     <div class="ob-icon">🌙</div>
     <h2>Tager du spontane aftenture i bilen?</h2>
     <p class="ob-sub">Vi bruger det til at anbefale en minimumsgrænse</p>
@@ -97,7 +86,7 @@
       <button class="ob-choice" onclick="setChoice('aftensture','nogle',this)">Nogle gange</button>
       <button class="ob-choice" onclick="setChoice('aftensture','ofte',this)">Ofte</button>
     </div>
-    <button class="ob-next" onclick="obNext(6)">Se dit estimat</button>
+    <button class="ob-next" onclick="obNext(5)">Se dit estimat</button>
   </div>
 
   <div class="ob-step" id="ob-summary" style="display:none">

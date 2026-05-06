@@ -63,7 +63,7 @@ function updateClock() {
 function showOnboarding() {
   document.getElementById('onboarding').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
-  buildDots(6);
+  buildDots(5);
   setActiveDot(1);
 }
 
@@ -79,7 +79,7 @@ function buildDots(n) {
 }
 
 function setActiveDot(n) {
-  for (var i = 1; i <= 6; i++) {
+  for (var i = 1; i <= 5; i++) {
     var d = document.getElementById('dot-'+i);
     if (d) d.className = 'ob-dot' + (i <= n ? ' active' : '');
   }
@@ -87,23 +87,19 @@ function setActiveDot(n) {
 
 function obNext(step) {
   if (step === 1) {
-    var v = parseFloat(document.getElementById('inp-kwh').value);
-    if (!v || v <= 0) { document.getElementById('inp-kwh').focus(); return; }
-    ob.kwh_forbrug = v / 3;
-  } else if (step === 2) {
     var v2 = parseFloat(document.getElementById('inp-elregning').value);
     if (!v2 || v2 <= 0) { document.getElementById('inp-elregning').focus(); return; }
     ob.elregning = v2 / 3;
-  } else if (step === 3) {
+  } else if (step === 2) {
     var v3 = parseFloat(document.getElementById('inp-km').value);
     if (v3 === undefined || v3 < 0) v3 = 0;
     ob.km_dag = v3;
-  } else if (step === 4) {
+  } else if (step === 3) {
     ob.personer = parseInt(document.getElementById('stepper-val').textContent) || 2;
-  } else if (step === 5) {
+  } else if (step === 4) {
     if (!obChoices['hjemoplad']) { return; }
     ob.hjemoplad = obChoices['hjemoplad'];
-  } else if (step === 6) {
+  } else if (step === 5) {
     if (!obChoices['aftensture']) { return; }
     ob.aftensture = obChoices['aftensture'];
     showSummary();
@@ -134,7 +130,7 @@ function setChoice(key, val, btn) {
 }
 
 function showSummary() {
-  document.getElementById('ob-step-6').style.display = 'none';
+  document.getElementById('ob-step-5').style.display = 'none';
   document.getElementById('ob-summary').style.display = 'flex';
   document.getElementById('ob-dots').style.display = 'none';
 
