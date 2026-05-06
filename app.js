@@ -90,6 +90,7 @@ function obNext(step) {
     var v2 = parseFloat(document.getElementById('inp-elregning').value);
     if (!v2 || v2 <= 0) { document.getElementById('inp-elregning').focus(); return; }
     ob.elregning = v2 / 3;
+    ob.kwh_forbrug = ob.elregning / 2.06;
   } else if (step === 2) {
     var v3 = parseFloat(document.getElementById('inp-km').value);
     if (v3 === undefined || v3 < 0) v3 = 0;
